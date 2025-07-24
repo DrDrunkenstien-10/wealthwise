@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="ERROR" monitorInterval="30">
+    <Properties>
+        <Property name="logDir">logs</Property>
+        <Property name="logFileName">${logDir}/wealthwise.log</Property>
+        <Property name="logFilePattern">${logDir}/wealthwise-%d{yyyy-MM-dd}-%i.log.gz</Property>
+    </Properties>
+
+    <Appenders>
+
+        <!-- Console Appender with human-readable PatternLayout -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{ISO8601} [%t] %-5level %logger{36} - %msg traceId=%X{traceId} userId=%X{userId} class=%X{class} method=%X{method} httpMethod=%X{httpMethod} duration=%X{duration}ms clientIp=%X{clientIp} requestUri=%X{requestUri}%n"/>
+        </Console>
+
+        <!-- Rolling File Appender with JSON format and MDC properties -->
+        <RollingFile name="JsonFileAppender"
+            fileName="${logFileName}"
+            filePattern="${logFilePattern}">
+            <JsonLayout eventEol="true"
+                compact="true"
+                complete="false"
+                properties="true" />
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="14" fileIndex="min" />
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+
+        <!-- Async Logger for your application code -->
+        <AsyncLogger name="com.wealthwise" level="info" additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="JsonFileAppender" />
+        </AsyncLogger>
+
+        <!-- Root Logger for external libraries -->
+        <Root level="warn">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="JsonFileAppender" />
+        </Root>
+
+    </Loggers>
+</Configuration>
