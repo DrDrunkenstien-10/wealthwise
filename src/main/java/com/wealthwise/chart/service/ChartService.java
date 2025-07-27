@@ -29,7 +29,7 @@ public class ChartService {
         this.transactionRepository = transactionRepository;
     }
 
-    public List<PieChartResponseDTO> readMonthlyPieChartForUser(UUID userId, YearMonth month) {
+    public List<PieChartResponseDTO> getMonthlyExpenseSummaryByCategory(UUID userId, YearMonth month) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found."));
 
@@ -43,17 +43,17 @@ public class ChartService {
                 .findSumOfAmountForPieChartByUserAndDateRangeAndType(userId, start, end, TransactionType.EXPENSE);
 
         List<PieChartResponseDTO> pieChartResponseDTOList = new ArrayList<>();
-        
+
         for (PieChartSummary pieChartSummary : pieChartSummaryList) {
             PieChartResponseDTO pieChartResponseDTO = new PieChartResponseDTO();
-            
+
             pieChartResponseDTO.setAmount(pieChartSummary.getAmount());
             pieChartResponseDTO.setCategory(pieChartSummary.getCategory());
 
             BigDecimal percentage = pieChartSummary.getAmount()
                     .divide(totalAmount.getAmount(), 4, RoundingMode.HALF_UP) // specify scale and rounding
                     .multiply(new BigDecimal("100"));
-                    
+
             pieChartResponseDTO.setPercentage(percentage);
 
             pieChartResponseDTOList.add(pieChartResponseDTO);

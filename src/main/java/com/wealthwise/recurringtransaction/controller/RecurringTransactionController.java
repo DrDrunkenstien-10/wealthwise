@@ -49,13 +49,13 @@ public class RecurringTransactionController {
 		UUID userId = currentUserProvider.getCurrentUserId(jwt);
 
 		RecurringTransactionResponseDTO recurringTransactionResponseDTO = recurringTransactionService
-				.create(recurringTransactionRequestDTO, userId);
+				.createRecurringTransaction(recurringTransactionRequestDTO, userId);
 
 		return ResponseEntity.ok().body(recurringTransactionResponseDTO);
 	}
 
-	@GetMapping()
-	public ResponseEntity<PaginatedResponseDTO<RecurringTransactionResponseDTO>> getRecurringTransactions(
+	@GetMapping
+	public ResponseEntity<PaginatedResponseDTO<RecurringTransactionResponseDTO>> getAllRecurringTransactions(
 			@AuthenticationPrincipal Jwt jwt,
 			@RequestParam(name = "page", defaultValue = "0") int page,
 			@RequestParam(name = "size", defaultValue = "10") int size,
@@ -70,7 +70,7 @@ public class RecurringTransactionController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<RecurringTransactionResponseDTO> getRecurringTransaction(
+	public ResponseEntity<RecurringTransactionResponseDTO> getRecurringTransactionById(
 			@AuthenticationPrincipal Jwt jwt,
 			@PathVariable("id") UUID recurringTransactionId) {
 
@@ -118,7 +118,7 @@ public class RecurringTransactionController {
 	}
 
 	@PatchMapping("/{id}")
-	public ResponseEntity<RecurringTransactionResponseDTO> update(
+	public ResponseEntity<RecurringTransactionResponseDTO> updateRecurringTransaction(
 			@AuthenticationPrincipal Jwt jwt,
 			@PathVariable("id") UUID recurringTransactionId,
 			@RequestBody @Valid RecurringTransactionPatchRequestDTO recurringTransactionPatchRequestDTO) {
@@ -133,7 +133,7 @@ public class RecurringTransactionController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(
+	public ResponseEntity<Void> deleteRecurringTransaction(
 			@AuthenticationPrincipal Jwt jwt,
 			@PathVariable("id") UUID recurringTransactionId) {
 

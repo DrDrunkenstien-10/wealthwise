@@ -49,13 +49,13 @@ public class TransactionController {
 		UUID userId = currentUserProvider.getCurrentUserId(jwt);
 
 		TransactionResponseDTO transactionResponseDTO = transactionService
-				.create(transactionRequestDTO, userId);
+				.createTransaction(transactionRequestDTO, userId);
 
 		return ResponseEntity.ok().body(transactionResponseDTO);
 	}
 
 	@GetMapping
-	public ResponseEntity<PaginatedResponseDTO<TransactionResponseDTO>> getTransactions(
+	public ResponseEntity<PaginatedResponseDTO<TransactionResponseDTO>> getAllTransactions(
 			@AuthenticationPrincipal Jwt jwt,
 			@RequestParam(name = "page", defaultValue = "0") int page,
 			@RequestParam(name = "size", defaultValue = "10") int size,
@@ -70,7 +70,7 @@ public class TransactionController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<TransactionResponseDTO> getTransaction(
+	public ResponseEntity<TransactionResponseDTO> getTransactionById(
 			@AuthenticationPrincipal Jwt jwt,
 			@PathVariable("id") UUID transactionId) {
 

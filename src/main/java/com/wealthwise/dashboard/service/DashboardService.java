@@ -26,7 +26,7 @@ public class DashboardService {
         this.userRepository = userRepository;
     }
 
-    public DashboardSummaryResponseDTO readMonthlySummaryForUser(YearMonth month, UUID userId) {
+    public DashboardSummaryResponseDTO getMonthlyTransactionSummary(YearMonth month, UUID userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found."));
 

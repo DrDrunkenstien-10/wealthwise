@@ -58,7 +58,7 @@ public class ReceiptController {
             @AuthenticationPrincipal Jwt jwt) throws IOException {
 
         UUID userId = currentUserProvider.getCurrentUserId(jwt);
-        return receiptViewService.prepareReceiptResponse(transactionId, userId, false); // false = inline
+        return receiptViewService.prepareReceiptResponse(transactionId, userId, false);
     }
 
     @GetMapping("/download/{transactionId}")
@@ -67,6 +67,6 @@ public class ReceiptController {
             @AuthenticationPrincipal Jwt jwt) throws IOException {
 
         UUID userId = currentUserProvider.getCurrentUserId(jwt);
-        return receiptViewService.prepareReceiptResponse(transactionId, userId, true); // true = attachment
+        return receiptViewService.prepareReceiptResponse(transactionId, userId, true);
     }
 }

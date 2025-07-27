@@ -40,7 +40,7 @@ public class TransactionService {
 		this.transactionRepository = transactionRepository;
 	}
 
-	public TransactionResponseDTO create(TransactionRequestDTO transactionRequestDTO,
+	public TransactionResponseDTO createTransaction(TransactionRequestDTO transactionRequestDTO,
 			UUID userId) {
 				
 		if (transactionRepository.existsByUserIdAndName(userId, transactionRequestDTO.getName())) {

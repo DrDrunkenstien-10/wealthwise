@@ -25,7 +25,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Void> createUser(@AuthenticationPrincipal Jwt jwt) {
-        String userId = jwt.getSubject(); // Typically "sub" field from JWT
+        String userId = jwt.getSubject();
         logger.info("Received request to create user with subject (userId): {}", userId);
 
         boolean created = userService.createUser(jwt);

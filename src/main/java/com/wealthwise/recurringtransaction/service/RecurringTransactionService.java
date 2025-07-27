@@ -45,7 +45,7 @@ public class RecurringTransactionService {
 		this.recurringTransactionValidator = recurringTransactionValidator;
 	}
 
-	public RecurringTransactionResponseDTO create(
+	public RecurringTransactionResponseDTO createRecurringTransaction(
 			RecurringTransactionRequestDTO recurringTransactionRequestDTO,
 			UUID userId) {
 

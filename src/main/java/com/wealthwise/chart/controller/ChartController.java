@@ -28,13 +28,13 @@ public class ChartController {
     }
 
     @GetMapping("/expense-summary-by-category")
-    public ResponseEntity<List<PieChartResponseDTO>> readUserMonthlyPieChart(
+    public ResponseEntity<List<PieChartResponseDTO>> getMonthlyExpenseSummaryByCategory(
             @AuthenticationPrincipal Jwt jwt,
             @RequestParam("month") YearMonth month) {
 
         UUID userId = currentUserProvider.getCurrentUserId(jwt);
 
-        List<PieChartResponseDTO> pieChartResponseDTO = chartService.readMonthlyPieChartForUser(userId, month);
+        List<PieChartResponseDTO> pieChartResponseDTO = chartService.getMonthlyExpenseSummaryByCategory(userId, month);
 
         return ResponseEntity.ok().body(pieChartResponseDTO);
     }

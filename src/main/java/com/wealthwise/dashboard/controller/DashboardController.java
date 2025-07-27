@@ -27,14 +27,14 @@ public class DashboardController {
     }
 
     @GetMapping("/transaction-summary")
-    public ResponseEntity<DashboardSummaryResponseDTO> readUserMonthlyDashboard(
+    public ResponseEntity<DashboardSummaryResponseDTO> getMonthlyTransactionSummary(
             @AuthenticationPrincipal Jwt jwt,
             @RequestParam("month") YearMonth month) {
 
         UUID userId = currentUserProvider.getCurrentUserId(jwt);
 
         DashboardSummaryResponseDTO dashboardSummaryResponseDTO = dashboardService
-                .readMonthlySummaryForUser(month, userId);
+                .getMonthlyTransactionSummary(month, userId);
 
         return ResponseEntity.ok().body(dashboardSummaryResponseDTO);
     }
