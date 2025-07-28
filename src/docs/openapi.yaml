@@ -1,0 +1,824 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:5000
+  description: Generated server url
+paths:
+  /api/v1/users:
+    post:
+      tags:
+      - user-controller
+      operationId: createUser
+      responses:
+        "200":
+          description: OK
+  /api/v1/transactions:
+    get:
+      tags:
+      - transaction-controller
+      operationId: getAllTransactions
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: createdAt
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginatedResponseDTOTransactionResponseDTO"
+    post:
+      tags:
+      - transaction-controller
+      operationId: createTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TransactionResponseDTO"
+  /api/v1/recurring-transactions:
+    get:
+      tags:
+      - recurring-transaction-controller
+      operationId: getAllRecurringTransactions
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: createdAt
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginatedResponseDTORecurringTransactionResponseDTO"
+    post:
+      tags:
+      - recurring-transaction-controller
+      operationId: createRecurringTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecurringTransactionRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RecurringTransactionResponseDTO"
+  /api/v1/receipt:
+    post:
+      tags:
+      - receipt-controller
+      operationId: saveReceipt
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                receipt:
+                  type: string
+                  format: binary
+                metadata:
+                  $ref: "#/components/schemas/ReceiptRequestDTO"
+              required:
+              - metadata
+              - receipt
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ReceiptResponseDTO"
+  /api/v1/transactions/{id}:
+    get:
+      tags:
+      - transaction-controller
+      operationId: getTransactionById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TransactionResponseDTO"
+    delete:
+      tags:
+      - transaction-controller
+      operationId: deleteTransaction
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+      - transaction-controller
+      operationId: updateTransaction
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionPatchDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TransactionResponseDTO"
+  /api/v1/recurring-transactions/{id}:
+    get:
+      tags:
+      - recurring-transaction-controller
+      operationId: getRecurringTransactionById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RecurringTransactionResponseDTO"
+    delete:
+      tags:
+      - recurring-transaction-controller
+      operationId: deleteRecurringTransaction
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+      - recurring-transaction-controller
+      operationId: updateRecurringTransaction
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecurringTransactionPatchRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/RecurringTransactionResponseDTO"
+  /api/v1/transactions/search:
+    get:
+      tags:
+      - transaction-controller
+      operationId: searchTransactions
+      parameters:
+      - name: transactionName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: minAmount
+        in: query
+        required: false
+        schema:
+          type: number
+      - name: maxAmount
+        in: query
+        required: false
+        schema:
+          type: number
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: paymentType
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: transactionType
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - INCOME
+          - EXPENSE
+      - name: date
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: transactionId
+      - name: direction
+        in: query
+        required: false
+        schema:
+          type: string
+          default: asc
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginatedResponseDTOTransactionResponseDTO"
+  /api/v1/recurring-transactions/search:
+    get:
+      tags:
+      - recurring-transaction-controller
+      operationId: searchRecurringTransactions
+      parameters:
+      - name: recurringTransactionName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: minAmount
+        in: query
+        required: false
+        schema:
+          type: number
+      - name: maxAmount
+        in: query
+        required: false
+        schema:
+          type: number
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: paymentType
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: transactionType
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - INCOME
+          - EXPENSE
+      - name: isActive
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: frequency
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - MONTHLY
+          - YEARLY
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: recurringTransactionId
+      - name: direction
+        in: query
+        required: false
+        schema:
+          type: string
+          default: asc
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaginatedResponseDTORecurringTransactionResponseDTO"
+  /api/v1/receipt/view/{transactionId}:
+    get:
+      tags:
+      - receipt-controller
+      operationId: viewReceipt
+      parameters:
+      - name: transactionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: byte
+  /api/v1/receipt/download/{transactionId}:
+    get:
+      tags:
+      - receipt-controller
+      operationId: downloadReceipt
+      parameters:
+      - name: transactionId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: byte
+  /api/v1/dashboard/transaction-summary:
+    get:
+      tags:
+      - dashboard-controller
+      operationId: getMonthlyTransactionSummary
+      parameters:
+      - name: month
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DashboardSummaryResponseDTO"
+  /api/v1/chart/expense-summary-by-category:
+    get:
+      tags:
+      - chart-controller
+      operationId: getMonthlyExpenseSummaryByCategory
+      parameters:
+      - name: month
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PieChartResponseDTO"
+components:
+  schemas:
+    TransactionRequestDTO:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 100
+          minLength: 0
+        description:
+          type: string
+        amount:
+          type: number
+          minimum: 0.01
+        category:
+          type: string
+          maxLength: 50
+          minLength: 0
+        paymentType:
+          type: string
+          maxLength: 50
+          minLength: 0
+        date:
+          type: string
+          format: date-time
+        transactionType:
+          type: string
+          enum:
+          - INCOME
+          - EXPENSE
+      required:
+      - amount
+      - date
+      - name
+      - transactionType
+    TransactionResponseDTO:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+        category:
+          type: string
+        paymentType:
+          type: string
+        date:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        transactionType:
+          type: string
+          enum:
+          - INCOME
+          - EXPENSE
+    RecurringTransactionRequestDTO:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        recurringTransactionName:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        amount:
+          type: number
+          minimum: 0.01
+        category:
+          type: string
+          minLength: 1
+        paymentType:
+          type: string
+          minLength: 1
+        transactionType:
+          type: string
+          enum:
+          - INCOME
+          - EXPENSE
+        frequency:
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - MONTHLY
+          - YEARLY
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        nextOccurrence:
+          type: string
+          format: date
+      required:
+      - amount
+      - category
+      - endDate
+      - frequency
+      - paymentType
+      - recurringTransactionName
+      - startDate
+      - transactionType
+    RecurringTransactionResponseDTO:
+      type: object
+      properties:
+        recurringTransactionId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        recurringTransactionName:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+        category:
+          type: string
+        paymentType:
+          type: string
+        transactionType:
+          type: string
+          enum:
+          - INCOME
+          - EXPENSE
+        frequency:
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - MONTHLY
+          - YEARLY
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        nextOccurence:
+          type: string
+          format: date
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ReceiptRequestDTO:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+      required:
+      - transactionId
+    ReceiptResponseDTO:
+      type: object
+      properties:
+        receiptId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        transactionId:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        filePath:
+          type: string
+        uploadTimestamp:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    TransactionPatchDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+          minimum: 0.01
+        category:
+          type: string
+        paymentType:
+          type: string
+        date:
+          type: string
+          format: date-time
+        transactionType:
+          type: string
+          enum:
+          - INCOME
+          - EXPENSE
+    RecurringTransactionPatchRequestDTO:
+      type: object
+      properties:
+        recurringTransactionName:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+          minimum: 0.01
+        category:
+          type: string
+        paymentType:
+          type: string
+        transactionType:
+          type: string
+          enum:
+          - INCOME
+          - EXPENSE
+        frequency:
+          type: string
+          enum:
+          - DAILY
+          - WEEKLY
+          - MONTHLY
+          - YEARLY
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        nextOccurrence:
+          type: string
+          format: date
+        isActive:
+          type: boolean
+    PaginatedResponseDTOTransactionResponseDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransactionResponseDTO"
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        last:
+          type: boolean
+        first:
+          type: boolean
+    PaginatedResponseDTORecurringTransactionResponseDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecurringTransactionResponseDTO"
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        last:
+          type: boolean
+        first:
+          type: boolean
+    DashboardSummaryResponseDTO:
+      type: object
+      properties:
+        month:
+          type: string
+        income:
+          type: number
+        expenses:
+          type: number
+        savings:
+          type: number
+    PieChartResponseDTO:
+      type: object
+      properties:
+        category:
+          type: string
+        amount:
+          type: number
+        percentage:
+          type: number
