@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="ERROR" monitorInterval="30">
     <Properties>
-        <Property name="logDir">app/logs</Property>
+        <Property name="logDir">logs</Property>
         <Property name="logFileName">${logDir}/wealthwise.log</Property>
         <Property name="logFilePattern">${logDir}/wealthwise-%d{yyyy-MM-dd}-%i.log.gz</Property>
     </Properties>
