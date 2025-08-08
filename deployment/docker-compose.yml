@@ -1,0 +1,112 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16.9
+    container_name: wealthwise-postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
+      - POSTGRES_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - wealthwise-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: wealthwise-prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "${PROMETHEUS_PORT}:9090"
+    networks:
+      - wealthwise-network
+
+  loki:
+    image: grafana/loki:2.9.2
+    container_name: wealthwise-loki
+    ports:
+      - "${LOKI_PORT}:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - wealthwise-network
+
+  promtail:
+    image: grafana/promtail:2.9.2
+    container_name: wealthwise-promtail
+    volumes:
+      - /var/log:/var/log
+      - /etc/machine-id:/etc/machine-id
+      - /etc/hostname:/etc/hostname
+      - /etc/localtime:/etc/localtime
+      - ./promtail/promtail.yml:/etc/promtail/config.yml
+      - ../logs:/app/logs
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - wealthwise-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: wealthwise-grafana
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - wealthwise-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.0
+    container_name: wealthwise-keycloak
+    command: >
+      start
+        --proxy-headers xforwarded
+        --hostname-strict=false
+        --hostname=https://auth.wealthwise.ajadhav.com
+        --hostname-admin=https://auth.wealthwise.ajadhav.com
+        --http-enabled=true
+    environment:
+      KC_HTTP_ENABLED: "true"
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    ports:
+      - "${KEYCLOAK_PORT}:8080"
+    volumes:
+      - /home/atharva/keycloak-26.3.0/themes/wealthwise-login-theme:/opt/keycloak/themes/wealthwise-login-theme
+    networks:
+      - wealthwise-network
+
+  wealthwise-app:
+    build:
+      context: ../                       
+      dockerfile: Dockerfile
+    container_name: wealthwise-app
+    depends_on:
+      - postgres
+      - keycloak
+    ports:
+      - "${SPRING_SERVER_PORT}:5000"
+    volumes:
+      - ../upload/receipts:/app/upload/receipts
+      - ../logs:/app/logs
+    env_file:
+      - .env                             
+    networks:
+      - wealthwise-network
+
+volumes:
+  postgres_data:
+
+networks:
+  wealthwise-network:
+    driver: bridge
